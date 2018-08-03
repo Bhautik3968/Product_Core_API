@@ -1,0 +1,14 @@
+D:\bhautik\Angular\ProductCoreAPI\bin\Debug\netcoreapp2.1\ProductCoreAPI.deps.json
+D:\bhautik\Angular\ProductCoreAPI\bin\Debug\netcoreapp2.1\ProductCoreAPI.runtimeconfig.json
+D:\bhautik\Angular\ProductCoreAPI\bin\Debug\netcoreapp2.1\ProductCoreAPI.runtimeconfig.dev.json
+D:\bhautik\Angular\ProductCoreAPI\bin\Debug\netcoreapp2.1\ProductCoreAPI.dll
+D:\bhautik\Angular\ProductCoreAPI\bin\Debug\netcoreapp2.1\ProductCoreAPI.pdb
+D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.csprojAssemblyReference.cache
+D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.csproj.CoreCompileInputs.cache
+D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.RazorAssemblyInfo.cache
+D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.RazorAssemblyInfo.cs
+D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.AssemblyInfoInputs.cache
+D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.AssemblyInfo.cs
+D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.RazorTargetAssemblyInfo.cache
+D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.dll
+D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.pdb
