@@ -46,8 +46,7 @@ namespace ProductCoreAPI
 
                     ValidIssuer="ProductCoreAPI.Bearer",
                     ValidAudience="ProductCoreAPI.Bearer",
-                    IssuerSigningKey=JwtSecurityKey.Create("ProductCoreAPI-secret-key")
-                    
+                    IssuerSigningKey=JwtSecurityKey.Create("ProductCoreAPI-secret-key")                    
                 };
             }); 
 
@@ -59,12 +58,11 @@ namespace ProductCoreAPI
             services.AddCors();
             services.AddMvc(setupAction =>
             {               
-                setupAction.ReturnHttpNotAcceptable = true;
-                /* setupAction.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter()); */
+                setupAction.ReturnHttpNotAcceptable = true;               
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-            .AddJsonOptions(options =>options.SerializerSettings.ContractResolver = new DefaultContractResolver());
-
+            .AddJsonOptions(options =>options.SerializerSettings.ContractResolver = new DefaultContractResolver())
+            .AddMvcOptions(options=>options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter()));            
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
@@ -73,8 +71,7 @@ namespace ProductCoreAPI
             var connectionString = @"Data Source=T4BhautikPC;Initial Catalog=Test;Persist Security Info=True;User ID=sa; Password=He@lth25;Max Pool Size=3000;Pooling=True;";
             services.AddDbContext<ProductContext>(x => x.UseSqlServer(connectionString));
             services.AddDbContext<UserContext>(x => x.UseSqlServer(connectionString));
-            services.AddDbContext<DbErrorContext>(x => x.UseSqlServer(connectionString));
-            
+            services.AddDbContext<DbErrorContext>(x => x.UseSqlServer(connectionString));            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
