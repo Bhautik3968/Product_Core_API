@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using ProductCoreAPI.Helpers;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Cors;
 namespace ProductCoreAPI
 {
     public class Startup
@@ -56,17 +57,18 @@ namespace ProductCoreAPI
                     policy => policy.RequireClaim("UserId"));
             });          
             services.AddCors();
-            services.AddMvc(setupAction =>
+            /* services.AddMvc(setupAction =>
             {               
                 setupAction.ReturnHttpNotAcceptable = true;               
-            })
+            }) */
+            services.AddMvc()
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
             .AddJsonOptions(options =>options.SerializerSettings.ContractResolver = new DefaultContractResolver())
             .AddMvcOptions(options=>options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter()));            
-            services.Configure<ApiBehaviorOptions>(options =>
+            /* services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
-            });
+            }); */
 
             var connectionString = @"Data Source=T4BhautikPC;Initial Catalog=Test;Persist Security Info=True;User ID=sa; Password=He@lth25;Max Pool Size=3000;Pooling=True;";
             services.AddDbContext<ProductContext>(x => x.UseSqlServer(connectionString));
