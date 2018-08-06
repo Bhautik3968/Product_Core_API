@@ -62,15 +62,14 @@ namespace ProductCoreAPI
                 setupAction.ReturnHttpNotAcceptable = true;               
             }) */
             services.AddMvc()
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)        
             .AddJsonOptions(options =>options.SerializerSettings.ContractResolver = new DefaultContractResolver())
             .AddMvcOptions(options=>options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter()));            
-            /* services.Configure<ApiBehaviorOptions>(options =>
+           /*  services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
-            }); */
-
-            var connectionString = @"Data Source=T4BhautikPC;Initial Catalog=Test;Persist Security Info=True;User ID=sa; Password=He@lth25;Max Pool Size=3000;Pooling=True;";
+            });  */      
+            var connectionString =Configuration.GetConnectionString("DbConnectionString"); 
             services.AddDbContext<ProductContext>(x => x.UseSqlServer(connectionString));
             services.AddDbContext<UserContext>(x => x.UseSqlServer(connectionString));
             services.AddDbContext<DbErrorContext>(x => x.UseSqlServer(connectionString));            
@@ -99,7 +98,7 @@ namespace ProductCoreAPI
                         await context.Response.WriteAsync("An unexpected fault happened. Please Contact your Administrator.");
                     });
                 });
-            }
+            }          
             app.UseHttpsRedirection();
             app.UseAuthentication();              
             app.UseCors(builder => builder

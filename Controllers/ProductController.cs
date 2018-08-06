@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductCoreAPI.DBContext;
 using ProductCoreAPI.Models;
+using ProductCoreAPI.Helpers;
 namespace ProductCoreAPI.Controllers
 {
     [Route("api/Product")]
@@ -42,7 +43,7 @@ namespace ProductCoreAPI.Controllers
             if (product == null)
             {
                 return BadRequest();
-            }
+            }          
             _ctx.Product.Add(product);
             _ctx.SaveChanges();
             return CreatedAtRoute("GetProductByID", new { id = product.ID }, product);
@@ -54,7 +55,7 @@ namespace ProductCoreAPI.Controllers
             if (product == null || product.ID==0)
             {
                 return BadRequest();
-            }
+            }            
             var item = _ctx.Product.Find(product.ID);
             if (item == null)
             {
