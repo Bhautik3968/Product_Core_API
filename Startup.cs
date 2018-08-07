@@ -83,7 +83,7 @@ namespace ProductCoreAPI
                 app.UseDeveloperExceptionPage();
             }
             else
-            {
+            {                
                 app.UseHsts();
                 app.UseExceptionHandler(appBuilder =>
                 {
