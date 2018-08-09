@@ -44,6 +44,7 @@ namespace ProductCoreAPI.Controllers
             {
                 return Unauthorized();
             }
-        }
+        }        
     }
+    
 }
