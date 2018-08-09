@@ -10,8 +10,7 @@ using ProductCoreAPI.Helpers;
 namespace ProductCoreAPI.Controllers
 {
     [Route("api/Error")]
-    [ApiController]
-    [Authorize]
+    [ApiController]   
     public class ErrorController : ControllerBase
     {
         private DbErrorContext _ctx;
@@ -44,7 +43,7 @@ namespace ProductCoreAPI.Controllers
             {
                 return BadRequest();
             }          
-            _ctx.API_Errors.Add(error);
+             
             _ctx.SaveChanges();
             return CreatedAtRoute("GetErrorByID", new { id = error.ID }, error);
         }       

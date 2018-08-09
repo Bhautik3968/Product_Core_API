@@ -12,3 +12,4 @@ D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.Assembl
 D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.RazorTargetAssemblyInfo.cache
 D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.dll
 D:\bhautik\Angular\ProductCoreAPI\obj\Debug\netcoreapp2.1\ProductCoreAPI.pdb
+D:\Bhautik\Angular\ProductCoreAPI\bin\Debug\netcoreapp2.1\nlog.config

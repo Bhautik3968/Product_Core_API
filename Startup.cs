@@ -20,6 +20,7 @@ using ProductCoreAPI.Helpers;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Cors;
+using NLog.Extensions.Logging;
 namespace ProductCoreAPI
 {
     public class Startup
@@ -36,7 +37,7 @@ namespace ProductCoreAPI
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(Options =>
-            {                
+            {
                 Options.RequireHttpsMetadata = false;
                 Options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -45,34 +46,34 @@ namespace ProductCoreAPI
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
 
-                    ValidIssuer="ProductCoreAPI.Bearer",
-                    ValidAudience="ProductCoreAPI.Bearer",
-                    IssuerSigningKey=JwtSecurityKey.Create("ProductCoreAPI-secret-key")                    
+                    ValidIssuer = "ProductCoreAPI.Bearer",
+                    ValidAudience = "ProductCoreAPI.Bearer",
+                    IssuerSigningKey = JwtSecurityKey.Create("ProductCoreAPI-secret-key")
                 };
-            }); 
+            });
 
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("User",
                     policy => policy.RequireClaim("UserId"));
-            });          
+            });
             services.AddCors();
             /* services.AddMvc(setupAction =>
             {               
                 setupAction.ReturnHttpNotAcceptable = true;               
             }) */
             services.AddMvc()
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)        
-            .AddJsonOptions(options =>options.SerializerSettings.ContractResolver = new DefaultContractResolver())
-            .AddMvcOptions(options=>options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter()));            
-           /*  services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });  */      
-            var connectionString =Configuration.GetConnectionString("DbConnectionString"); 
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver())
+            .AddMvcOptions(options => options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter()));
+            /*  services.Configure<ApiBehaviorOptions>(options =>
+             {
+                 options.SuppressModelStateInvalidFilter = true;
+             });  */
+            var connectionString = Configuration.GetConnectionString("DbConnectionString");
             services.AddDbContext<ProductContext>(x => x.UseSqlServer(connectionString));
             services.AddDbContext<UserContext>(x => x.UseSqlServer(connectionString));
-            services.AddDbContext<DbErrorContext>(x => x.UseSqlServer(connectionString));            
+            services.AddDbContext<DbErrorContext>(x => x.UseSqlServer(connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -83,24 +84,24 @@ namespace ProductCoreAPI
                 app.UseDeveloperExceptionPage();
             }
             else
-            {                
+            {
                 app.UseHsts();
-                app.UseExceptionHandler(appBuilder =>
+            }
+            app.UseExceptionHandler(appBuilder =>
                 {
                     appBuilder.Run(async context =>
                     {
-                        var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
+                        /* var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
                         if (exceptionHandlerFeature != null)
-                        {                                           
-                            var errMessage = exceptionHandlerFeature.Error.Message;
-                        }
+                        {
+                            var errorMessage=exceptionHandlerFeature.Error.Message;                                               
+                        } */
                         context.Response.StatusCode = 500;
                         await context.Response.WriteAsync("An unexpected fault happened. Please Contact your Administrator.");
                     });
                 });
-            }          
             app.UseHttpsRedirection();
-            app.UseAuthentication();              
+            app.UseAuthentication();
             app.UseCors(builder => builder
                        .AllowAnyOrigin()
                        .AllowAnyMethod()

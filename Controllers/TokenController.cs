@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ProductCoreAPI.Controllers
 {
-    [Route("api/token")]   
+    [Route("api/token")]
     [ApiController]
     [AllowAnonymous]
     public class TokenController : ControllerBase
@@ -22,7 +22,7 @@ namespace ProductCoreAPI.Controllers
         }
         [HttpPost]
         public IActionResult Create([FromBody]User _objUser)
-        {
+        {          
             if (_objUser == null)
             {
                 return BadRequest();
@@ -44,7 +44,6 @@ namespace ProductCoreAPI.Controllers
             {
                 return Unauthorized();
             }
-
         }
     }
 }
