@@ -7,28 +7,29 @@ using Microsoft.AspNetCore.Mvc;
 using ProductCoreAPI.DBContext;
 using ProductCoreAPI.Models;
 using ProductCoreAPI.Helpers;
+using ProductCoreAPI.Services;
 namespace ProductCoreAPI.Controllers
 {
     [Route("api/Error")]
-    [ApiController]   
+    [ApiController]
     public class ErrorController : ControllerBase
     {
-        private DbErrorContext _ctx;
-        public ErrorController(DbErrorContext ctx)
+        private IProductCoreAPIRepository _productCoreAPIRepository;
+        public ErrorController(IProductCoreAPIRepository productCoreAPIRepository)
         {
-            _ctx = ctx;
+            _productCoreAPIRepository = productCoreAPIRepository;
         }
-         
+
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_ctx.API_Errors.ToList());
+            return Ok(_productCoreAPIRepository.GetErrors());
         }
 
         [HttpGet("{id}", Name = "GetErrorByID")]
         public IActionResult GetById(int id)
         {
-            var item = _ctx.API_Errors.Find(id);
+            var item = _productCoreAPIRepository.GetError(id);
             if (item == null)
             {
                 return NotFound();
@@ -42,10 +43,10 @@ namespace ProductCoreAPI.Controllers
             if (error == null)
             {
                 return BadRequest();
-            }          
-             
-            _ctx.SaveChanges();
+            }
+            _productCoreAPIRepository.AddError(error);
+            _productCoreAPIRepository.Save();
             return CreatedAtRoute("GetErrorByID", new { id = error.ID }, error);
-        }       
+        }
     }
 }

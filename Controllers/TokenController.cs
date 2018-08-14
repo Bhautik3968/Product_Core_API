@@ -7,7 +7,7 @@ using ProductCoreAPI.DBContext;
 using ProductCoreAPI.Models;
 using ProductCoreAPI.Helpers;
 using Microsoft.AspNetCore.Authorization;
-
+using ProductCoreAPI.Services;
 namespace ProductCoreAPI.Controllers
 {
     [Route("api/token")]
@@ -15,36 +15,29 @@ namespace ProductCoreAPI.Controllers
     [AllowAnonymous]
     public class TokenController : ControllerBase
     {
-        private UserContext _ctx;
-        public TokenController(UserContext ctx)
+        private IProductCoreAPIRepository _productCoreAPIRepository;
+        public TokenController(IProductCoreAPIRepository productCoreAPIRepository)
         {
-            _ctx = ctx;
+            _productCoreAPIRepository = productCoreAPIRepository;
         }
         [HttpPost]
         public IActionResult Create([FromBody]User _objUser)
-        {          
+        {
             if (_objUser == null)
             {
                 return BadRequest();
             }
-            var data = _ctx.tblUsers.Where(x => x.Username == _objUser.Username && x.Password == _objUser.Password).FirstOrDefault<User>();
+            var data = _productCoreAPIRepository.GetUsers().Where(x => x.Username == _objUser.Username && x.Password == _objUser.Password).FirstOrDefault<User>();
             if (data != null)
             {
-                var token = new JwtTokenBuilder()
-                                .AddSecurityKey(JwtSecurityKey.Create("ProductCoreAPI-secret-key"))
-                                .AddSubject("Test")
-                                .AddIssuer("ProductCoreAPI.Bearer")
-                                .AddAudience("ProductCoreAPI.Bearer")
-                                .AddClaim("UserId", _objUser.ID.ToString())
-                                .AddExpiry(30)
-                                .Build();
+                var token = _productCoreAPIRepository.GetToken(_objUser.ID);
                 return Ok(token);
             }
             else
             {
                 return Unauthorized();
             }
-        }        
+        }
     }
-    
+
 }

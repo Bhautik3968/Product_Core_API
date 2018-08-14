@@ -21,6 +21,10 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Cors;
 using NLog.Extensions.Logging;
+using ProductCoreAPI.Services;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+
 namespace ProductCoreAPI
 {
     public class Startup
@@ -71,9 +75,15 @@ namespace ProductCoreAPI
                  options.SuppressModelStateInvalidFilter = true;
              });  */
             var connectionString = Configuration.GetConnectionString("DbConnectionString");
-            services.AddDbContext<ProductContext>(x => x.UseSqlServer(connectionString));
-            services.AddDbContext<UserContext>(x => x.UseSqlServer(connectionString));
-            services.AddDbContext<DbErrorContext>(x => x.UseSqlServer(connectionString));
+            services.AddDbContext<ProductCoreAPIContext>(x => x.UseSqlServer(connectionString));
+             //register the repository
+            services.AddScoped<IProductCoreAPIRepository,ProductCoreAPIRepository>();     
+            services.AddSingleton<IActionContextAccessor,ActionContextAccessor>(); 
+            services.AddScoped<IUrlHelper,UrlHelper>(implementationFactory=>
+            {
+               var actionContext=implementationFactory.GetServices<IActionContextAccessor>().FirstOrDefault().ActionContext;
+               return new UrlHelper(actionContext);
+            });       
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

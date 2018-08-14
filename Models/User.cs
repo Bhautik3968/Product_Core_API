@@ -1,3 +1,5 @@
+using System;
+
 namespace ProductCoreAPI.Models
 {
     public class User

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProductCoreAPI.DBContext;
 using ProductCoreAPI.Models;
 using ProductCoreAPI.Helpers;
+using ProductCoreAPI.Services;
 namespace ProductCoreAPI.Controllers
 {
     [Route("api/Product")]
@@ -14,22 +14,72 @@ namespace ProductCoreAPI.Controllers
     [Authorize]
     public class ProductController : ControllerBase
     {
-        private ProductContext _ctx;
-        public ProductController(ProductContext ctx)
+        private IProductCoreAPIRepository _productCoreAPIRepository;
+        private IUrlHelper _urlHelper;
+        public ProductController(IProductCoreAPIRepository productCoreAPIRepository, IUrlHelper urlHelper)
         {
-            _ctx = ctx;
+            _productCoreAPIRepository = productCoreAPIRepository;
+            _urlHelper = urlHelper;
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
+        [HttpGet(Name = "GetProducts")]
+        public IActionResult GetProducts([FromQuery] ProductResourceParameter productResourceParameter)
+        {           
+            var products = _productCoreAPIRepository.GetProducts(productResourceParameter);
+            var prevPageLink = products.HasPrevious ? CreateProductResourceUri(productResourceParameter, ResourceUriType.PreviousPage) : null;
+            var nextPageLink = products.HasNext ? CreateProductResourceUri(productResourceParameter, ResourceUriType.NextPage) : null;
+            var paginationMetadata = new
+            {
+                totalCount = products.TotalCount,
+                pageSize = products.PageSize,
+                currentPage = products.CurrentPage,
+                totalPages = products.TotalPages,
+                previousPageLink = prevPageLink,
+                nextPageLink = nextPageLink
+            };
+            Response.Headers.Add("X-Pagination", Newtonsoft.Json.JsonConvert.SerializeObject(paginationMetadata));
+            return Ok(products);
+        }
+
+        private string CreateProductResourceUri(ProductResourceParameter productResourceParameter, ResourceUriType type)
         {
-            return Ok(_ctx.Product.ToList());
+            switch (type)
+            {
+                case ResourceUriType.PreviousPage:
+                    return _urlHelper.Link("GetProducts",
+                    new
+                    {
+                        SearchQuery = productResourceParameter.SearchQuery,
+                        name = productResourceParameter.Name,
+                        pageNumber = productResourceParameter.pageNumber - 1,
+                        pageSize = productResourceParameter.PageSize
+                    });
+                case ResourceUriType.NextPage:
+                    return _urlHelper.Link("GetProducts",
+                    new
+                    {
+                        SearchQuery = productResourceParameter.SearchQuery,
+                        name = productResourceParameter.Name,
+                        pageNumber = productResourceParameter.pageNumber + 1,
+                        pageSize = productResourceParameter.PageSize
+                    });
+                default:
+                    return _urlHelper.Link("GetProducts",
+                    new
+                    {
+                        SearchQuery = productResourceParameter.SearchQuery,
+                        name = productResourceParameter.Name,
+                        pageNumber = productResourceParameter.pageNumber,
+                        pageSize = productResourceParameter.PageSize
+                    });
+            }
+
         }
 
         [HttpGet("{id}", Name = "GetProductByID")]
-        public IActionResult GetById(int id)
+        public IActionResult GetProduct(int id)
         {
-            var item = _ctx.Product.Find(id);
+            var item = _productCoreAPIRepository.GetProduct(id);
             if (item == null)
             {
                 return NotFound();
@@ -38,25 +88,28 @@ namespace ProductCoreAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(Product product)
+        public IActionResult Add([FromBody] Product product)
         {
             if (product == null)
             {
                 return BadRequest();
-            }          
-            _ctx.Product.Add(product);
-            _ctx.SaveChanges();
+            }
+            _productCoreAPIRepository.AddProduct(product);
+            if (!_productCoreAPIRepository.Save())
+            {
+                throw new Exception("failed to save product.");
+            }
             return CreatedAtRoute("GetProductByID", new { id = product.ID }, product);
         }
 
         [HttpPut]
-        public IActionResult Update(Product product)
+        public IActionResult Update([FromBody] Product product)
         {
-            if (product == null || product.ID==0)
+            if (product == null || product.ID == 0)
             {
                 return BadRequest();
-            }            
-            var item = _ctx.Product.Find(product.ID);
+            }
+            var item = _productCoreAPIRepository.GetProduct(product.ID);
             if (item == null)
             {
                 return NotFound();
@@ -66,8 +119,11 @@ namespace ProductCoreAPI.Controllers
             item.Price = product.Price;
             item.Quantity = product.Quantity;
             item.Image = product.Image;
-            _ctx.Product.Update(item);
-            _ctx.SaveChanges();
+            //_productCoreAPIRepository.UpdateProduct(item);
+            if (!_productCoreAPIRepository.Save())
+            {
+                throw new Exception("failed to update product.");
+            }
             //return NoContent();
             return Ok(product);
         }
@@ -75,13 +131,17 @@ namespace ProductCoreAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var item = _ctx.Product.Find(id);
+            var item = _productCoreAPIRepository.GetProduct(id);
             if (item == null)
             {
                 return NotFound();
             }
-            _ctx.Product.Remove(item);
-            _ctx.SaveChanges();
+            _productCoreAPIRepository.DeleteProduct(item);
+            if (!_productCoreAPIRepository.Save())
+            {
+                throw new Exception("failed to delete product.");
+            }
+            _productCoreAPIRepository.Save();
             //return NoContent();
             return Ok(id);
         }
